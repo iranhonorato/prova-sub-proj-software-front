@@ -1,0 +1,13 @@
+# Runtime dependencies
+next@14.2.5
+react@^18
+react-dom@^18
+
+# Dev dependencies
+@types/node@^20
+@types/react@^18
+@types/react-dom@^18
+typescript@^5
+
+# Install command
+# npm install
