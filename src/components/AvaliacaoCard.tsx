@@ -4,7 +4,7 @@ import styles from "./AvaliacaoCard.module.css";
 interface Props {
   avaliacao: Avaliacao;
   canDelete: boolean;
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
 }
 
 function notaColorClass(nota: number): string {
@@ -29,15 +29,15 @@ export default function AvaliacaoCard({ avaliacao, canDelete, onDelete }: Props)
       <div className={styles.header}>
         <div className={styles.emails}>
           <span className={styles.label}>Avaliador:</span>
-          <span>{avaliacao.emailAvaliador}</span>
+          <span>{avaliacao.email_avaliador}</span>
           <span className={styles.label}>Avaliado:</span>
-          <span>{avaliacao.emailAvaliado}</span>
+          <span>{avaliacao.email_avaliado}</span>
         </div>
         <div className={styles.meta}>
           <span className={`${styles.nota} ${notaColorClass(avaliacao.nota)}`}>
             {avaliacao.nota}/10
           </span>
-          <span className={styles.date}>{formatDate(avaliacao.dataAvaliacao)}</span>
+          <span className={styles.date}>{formatDate(avaliacao.data_avaliacao)}</span>
         </div>
       </div>
       <p className={styles.comentarios}>{avaliacao.comentarios}</p>

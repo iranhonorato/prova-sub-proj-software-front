@@ -25,7 +25,7 @@ export default function AvaliacoesPage() {
     setIsLoading(true);
     setError("");
     try {
-      const data = await listarAvaliacoes(user.token);
+      const data = await listarAvaliacoes(user.role);
       setAvaliacoes(data);
     } catch {
       setError("Erro ao carregar avaliações. Tente recarregar a página.");
@@ -44,15 +44,15 @@ export default function AvaliacoesPage() {
   }, [user, authLoading, router, fetchAvaliacoes]);
 
   const handleCriar = async (data: CriarAvaliacaoDto) => {
-    await criarAvaliacao(data, user!.token);
+    await criarAvaliacao(data, user!.role);
     setShowForm(false);
     await fetchAvaliacoes();
   };
 
-  const handleDeletar = async (id: number) => {
+  const handleDeletar = async (id: string) => {
     if (!confirm("Tem certeza que deseja excluir esta avaliação?")) return;
     try {
-      await deletarAvaliacao(id, user!.token);
+      await deletarAvaliacao(id, user!.role);
       setAvaliacoes((prev) => prev.filter((a) => a.id !== id));
     } catch {
       setError("Erro ao excluir avaliação.");

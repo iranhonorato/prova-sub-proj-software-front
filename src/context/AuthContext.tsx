@@ -1,14 +1,13 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { AuthUser, LoginCredentials } from "@/types";
-import { login as apiLogin } from "@/services/api";
+import { AuthUser, Role } from "@/types";
 
 interface AuthContextValue {
   user: AuthUser | null;
   isLoading: boolean;
-  login: (credentials: LoginCredentials) => Promise<void>;
-  logout: () => void;
+  entrar: (email: string, role: Role) => void;
+  sair: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -27,24 +26,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsLoading(false);
   }, []);
 
-  const login = async (credentials: LoginCredentials) => {
-    const response = await apiLogin(credentials);
-    const authUser: AuthUser = {
-      email: response.email,
-      role: response.role,
-      token: response.token,
-    };
+  const entrar = (email: string, role: Role) => {
+    const authUser: AuthUser = { email, role };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(authUser));
     setUser(authUser);
   };
 
-  const logout = () => {
+  const sair = () => {
     localStorage.removeItem(STORAGE_KEY);
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, isLoading, entrar, sair }}>
       {children}
     </AuthContext.Provider>
   );

@@ -9,11 +9,16 @@ interface Props {
   onCancel: () => void;
 }
 
+function todayISO(): string {
+  return new Date().toISOString().slice(0, 16);
+}
+
 const initialForm: CriarAvaliacaoDto = {
-  emailAvaliador: "",
-  emailAvaliado: "",
+  email_avaliador: "",
+  email_avaliado: "",
   comentarios: "",
   nota: 5,
+  data_avaliacao: todayISO(),
 };
 
 export default function AvaliacaoForm({ onSubmit, onCancel }: Props) {
@@ -36,7 +41,10 @@ export default function AvaliacaoForm({ onSubmit, onCancel }: Props) {
     setError("");
     setIsLoading(true);
     try {
-      await onSubmit(form);
+      await onSubmit({
+        ...form,
+        data_avaliacao: new Date(form.data_avaliacao).toISOString(),
+      });
     } catch {
       setError("Erro ao cadastrar avaliação. Tente novamente.");
       setIsLoading(false);
@@ -49,23 +57,23 @@ export default function AvaliacaoForm({ onSubmit, onCancel }: Props) {
         <h2 className={styles.title}>Nova Avaliação</h2>
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.field}>
-            <label htmlFor="emailAvaliador">E-mail do Avaliador</label>
+            <label htmlFor="email_avaliador">E-mail do Avaliador</label>
             <input
-              id="emailAvaliador"
+              id="email_avaliador"
               type="email"
-              value={form.emailAvaliador}
-              onChange={handleTextChange("emailAvaliador")}
+              value={form.email_avaliador}
+              onChange={handleTextChange("email_avaliador")}
               placeholder="avaliador@email.com"
               required
             />
           </div>
           <div className={styles.field}>
-            <label htmlFor="emailAvaliado">E-mail do Avaliado</label>
+            <label htmlFor="email_avaliado">E-mail do Avaliado</label>
             <input
-              id="emailAvaliado"
+              id="email_avaliado"
               type="email"
-              value={form.emailAvaliado}
-              onChange={handleTextChange("emailAvaliado")}
+              value={form.email_avaliado}
+              onChange={handleTextChange("email_avaliado")}
               placeholder="avaliado@email.com"
               required
             />
@@ -82,6 +90,16 @@ export default function AvaliacaoForm({ onSubmit, onCancel }: Props) {
             />
           </div>
           <div className={styles.field}>
+            <label htmlFor="data_avaliacao">Data da Avaliação</label>
+            <input
+              id="data_avaliacao"
+              type="datetime-local"
+              value={form.data_avaliacao}
+              onChange={handleTextChange("data_avaliacao")}
+              required
+            />
+          </div>
+          <div className={styles.field}>
             <label htmlFor="nota">
               Nota: <strong>{form.nota}</strong> / 10
             </label>
@@ -90,7 +108,7 @@ export default function AvaliacaoForm({ onSubmit, onCancel }: Props) {
               type="range"
               min={0}
               max={10}
-              step={1}
+              step={0.5}
               value={form.nota}
               onChange={handleNotaChange}
               className={styles.rangeInput}

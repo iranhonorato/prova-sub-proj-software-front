@@ -1,15 +1,15 @@
-import { Avaliacao, CriarAvaliacaoDto, LoginCredentials, LoginResponse } from "@/types";
+import { Avaliacao, CriarAvaliacaoDto, Role } from "@/types";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://127.0.0.1:8000";
 
 async function request<T>(
   path: string,
-  options: RequestInit = {},
-  token?: string
+  role: Role,
+  options: RequestInit = {}
 ): Promise<T> {
   const headers: HeadersInit = {
     "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    role,
     ...(options.headers as Record<string, string>),
   };
 
@@ -24,23 +24,17 @@ async function request<T>(
   return response.json();
 }
 
-export const login = (credentials: LoginCredentials): Promise<LoginResponse> =>
-  request<LoginResponse>("/auth/login", {
-    method: "POST",
-    body: JSON.stringify(credentials),
-  });
-
-export const listarAvaliacoes = (token: string): Promise<Avaliacao[]> =>
-  request<Avaliacao[]>("/avaliacoes", {}, token);
+export const listarAvaliacoes = (role: Role): Promise<Avaliacao[]> =>
+  request<Avaliacao[]>("/avaliacoes", role);
 
 export const criarAvaliacao = (
   data: CriarAvaliacaoDto,
-  token: string
+  role: Role
 ): Promise<Avaliacao> =>
-  request<Avaliacao>("/avaliacoes", {
+  request<Avaliacao>("/avaliacoes", role, {
     method: "POST",
     body: JSON.stringify(data),
-  }, token);
+  });
 
-export const deletarAvaliacao = (id: number, token: string): Promise<void> =>
-  request<void>(`/avaliacoes/${id}`, { method: "DELETE" }, token);
+export const deletarAvaliacao = (id: string, role: Role): Promise<void> =>
+  request<void>(`/avaliacoes/${id}`, role, { method: "DELETE" });

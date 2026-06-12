@@ -5,11 +5,11 @@ import { useAuth } from "@/context/AuthContext";
 import styles from "./Header.module.css";
 
 export default function Header() {
-  const { user, logout } = useAuth();
+  const { user, sair } = useAuth();
   const router = useRouter();
 
   const handleLogout = () => {
-    logout();
+    sair();
     router.push("/login");
   };
 

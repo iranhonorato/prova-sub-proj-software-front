@@ -3,28 +3,19 @@
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { Role } from "@/types";
 import styles from "./login.module.css";
 
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { entrar } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [role, setRole] = useState<Role>("USER");
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    setError("");
-    setIsLoading(true);
-    try {
-      await login({ email, password });
-      router.push("/avaliacoes");
-    } catch {
-      setError("Credenciais inválidas. Verifique e tente novamente.");
-    } finally {
-      setIsLoading(false);
-    }
+    entrar(email, role);
+    router.push("/avaliacoes");
   };
 
   return (
@@ -45,20 +36,32 @@ export default function LoginPage() {
             />
           </div>
           <div className={styles.field}>
-            <label htmlFor="password">Senha</label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-              autoComplete="current-password"
-            />
+            <label>Papel</label>
+            <div className={styles.roleGroup}>
+              <label className={`${styles.roleOption} ${role === "USER" ? styles.roleSelected : ""}`}>
+                <input
+                  type="radio"
+                  name="role"
+                  value="USER"
+                  checked={role === "USER"}
+                  onChange={() => setRole("USER")}
+                />
+                USER
+              </label>
+              <label className={`${styles.roleOption} ${role === "ADMIN" ? styles.roleSelected : ""}`}>
+                <input
+                  type="radio"
+                  name="role"
+                  value="ADMIN"
+                  checked={role === "ADMIN"}
+                  onChange={() => setRole("ADMIN")}
+                />
+                ADMIN
+              </label>
+            </div>
           </div>
-          {error && <p className={styles.error}>{error}</p>}
-          <button type="submit" disabled={isLoading} className={styles.button}>
-            {isLoading ? "Entrando..." : "Entrar"}
+          <button type="submit" className={styles.button}>
+            Entrar
           </button>
         </form>
       </div>
